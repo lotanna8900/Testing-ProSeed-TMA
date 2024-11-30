@@ -1,0 +1,47 @@
+const User = require('../models/User');
+
+// Get user data by ID
+exports.getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Update user PSDT balance
+exports.updateUserBalance = async (req, res) => {
+  const { id } = req.params;
+  const { balance } = req.body;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { psdtBalance: balance },
+      { new: true }
+    );
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Create or register a new user
+exports.createUser = async (req, res) => {
+  const { username, walletAddress } = req.body;
+
+  try {
+    const newUser = new User({ username, walletAddress, psdtBalance: 0 });
+    await newUser.save();
+    res.status(201).json(newUser);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
