@@ -17,6 +17,7 @@ function App() {
         <div className="app-container">
           <Routes>
             {/* Ensure JSX syntax by using <Component /> */}
+            <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />
             <Route path="/opportunity" element={<Opportunity />} />
             <Route path="/earn" element={<Earn />} />

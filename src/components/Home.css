@@ -45,12 +45,21 @@
 /* Logo styling */
 .logo {
   margin: 20px 0;
+  height: 100;
+  border-radius: 100%; /* Makes the shape circular */
+  object-fit: cover; /* Ensures the image fits well */
+  background-color: inherit;
 }
+.blended-background {
+  background-color: inherit; /* Matches parent background */
+}
+
 
 .logo-img {
   width: 150px;
   height: auto;
   border-radius: 8px; /* Slightly rounded corners */
+  background-color: inherit;
   box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2); /* Subtle shadow for depth */
 }
 
@@ -132,4 +141,11 @@
   .community-icon {
     font-size: 1.2rem;
   }
+}
+.circular-image {
+  width: 100px; /* Adjust the size as needed */
+  height: 100px; /* Must match width for a perfect circle */
+  border-radius: 50%; /* Makes the shape circular */
+  object-fit: cover; /* Ensures the image fits well */
+  background-color: transparent; /* Ensures no background color */
 }

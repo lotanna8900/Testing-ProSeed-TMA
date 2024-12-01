@@ -37,7 +37,7 @@ const Home = () => {
         <img
           src="https://raw.githubusercontent.com/AltaafML/website/main/git_proSEED_256.png"
           alt="proSEED Logo"
-          className="logo-img"
+          className="circular-image blended-background"
         />
       </div>
 
