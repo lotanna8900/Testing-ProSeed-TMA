@@ -1,6 +1,9 @@
 {
   "short_name": "React App",
-  "name": "Create React App Sample",
+  "name": "proSEED Telegram App",
+  "icon": "https://raw.githubusercontent.com/AltaafML/website/main/git_proSEED_256.png",
+  "url": "https://app.proseed.com",
+  "redirect_url": "https://app.proseed.com/wallet-return",
   "icons": [
     {
       "src": "favicon.ico",

@@ -8,6 +8,7 @@ const Home = () => {
   const {
     user, // Assuming 'user' contains currentUser info
     psdtBalance,
+    setPsdtBalance, // Add function to update PSDT balance
     handleDailyCheckIn,
     checkInStatus,
     fetchTelegramID,
@@ -15,8 +16,17 @@ const Home = () => {
 
   // Fetch user's Telegram ID when the component mounts
   useEffect(() => {
-    fetchTelegramID();
+    fetchTelegramID(); // Automatically retrieves user's Telegram ID
   }, [fetchTelegramID]);
+
+  // Function for handling Daily Check-in
+  const handleCheckIn = () => {
+    if (!checkInStatus) {
+      handleDailyCheckIn(); // Update context to reflect check-in status
+      setPsdtBalance((prevBalance) => prevBalance + 100); // Add +100 PSDT to balance
+      alert('Successfully checked in! +100 PSDT added to your balance.');
+    }
+  };
 
   return (
     <div className="home-container">
@@ -27,7 +37,7 @@ const Home = () => {
 
       {/* Daily Check-in Button */}
       <div className="check-in">
-        <button onClick={handleDailyCheckIn} disabled={checkInStatus}>
+        <button onClick={handleCheckIn} disabled={checkInStatus}>
           {checkInStatus ? 'Checked In' : 'Daily Check-in (+100 PSDT)'}
         </button>
       </div>
@@ -45,7 +55,7 @@ const Home = () => {
       <div className="psdt-balance">
         <h2>$PSDT Balance</h2>
         <div className="balance-amount">
-          <span>{psdtBalance} PSDT</span>
+          <span>{psdtBalance} PSDT</span> {/* Reflects opening balance and updates */}
         </div>
       </div>
 

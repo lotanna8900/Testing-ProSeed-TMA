@@ -7,9 +7,10 @@ const AppContext = createContext();
 // AppContext Provider component
 export const AppProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [psdtBalance, setPsdtBalance] = useState(0);
+  const [psdtBalance, setPsdtBalance] = useState(1000); // Initial balance
   const [walletAddress, setWalletAddress] = useState('');
   const [loading, setLoading] = useState(true);
+  const [checkInStatus, setCheckInStatus] = useState(false);
 
   // Fetch user data when component mounts or wallet address changes
   useEffect(() => {
@@ -44,20 +45,31 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  // Daily Check-in Function
+  const handleDailyCheckIn = () => {
+    if (!checkInStatus) {
+      const newBalance = psdtBalance + 100;
+      setPsdtBalance(newBalance); // Update state
+      updateBalance(newBalance); // Persist to database
+      setCheckInStatus(true); // Disable further check-ins for the day
+    }
+  };
+
   // Function to connect wallet and set wallet address
   const connectWallet = (address) => {
     setWalletAddress(address);
   };
+
+  // Fetch Telegram ID (Mock logic for now)
   const fetchTelegramID = async () => {
     try {
-      // Mock logic or API call
       console.log('Fetching Telegram ID...');
-      // Optionally simulate fetching Telegram ID
       return { telegramID: '123456789' }; // Replace with actual logic
     } catch (error) {
       console.error('Error fetching Telegram ID:', error);
     }
   };
+
   return (
     <AppContext.Provider
       value={{
@@ -68,6 +80,8 @@ export const AppProvider = ({ children }) => {
         connectWallet,
         updateBalance,
         fetchTelegramID,
+        handleDailyCheckIn,
+        checkInStatus,
       }}
     >
       {children}
