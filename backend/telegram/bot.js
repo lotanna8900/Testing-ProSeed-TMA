@@ -20,17 +20,14 @@ const app = express();
 app.use(express.json());
 
 // Set the webhook endpoint
-bot.setWebHook(`https://testing-pro-seed-tma-git-main-lotannas-projects-15b9a9b3.vercel.app/webhook`);
+bot.setWebHook(`https://testing-pro-seed-kw59ai8cl-lotannas-projects-15b9a9b3.vercel.app/webhook`);
 
 app.post('/webhook', (req, res) => {
   bot.processUpdate(req.body);
   res.sendStatus(200);
 });
 
-const PORT = process.env.PORT || 3000; // Use the PORT environment variable provided by Vercel
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Remove the server.listen() part
 
 // Listen for messages and command events
 bot.onText(/\/start/, (msg) => {
@@ -86,3 +83,6 @@ bot.onText(/\/fetchID/, async (msg) => {
     bot.sendMessage(chatId, 'An error occurred while fetching your Telegram ID.');
   }
 });
+
+// Export the app for Vercel's serverless functions
+module.exports = app;
