@@ -1,3 +1,4 @@
+const express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
 const connectDB = require('../config/db');
 const User = require('../models/User');
@@ -13,7 +14,24 @@ if (!token) {
 } else {
   console.log("Telegram Bot Token is provided");
 }
-const bot = new TelegramBot(token, { polling: true });
+
+const bot = new TelegramBot(token, { webHook: true });
+const app = express();
+app.use(express.json());
+
+// Set the webhook endpoint
+bot.setWebHook(`https://testing-pro-seed-9oq3uwduy-lotannas-projects-15b9a9b3.vercel.app/webhook`);
+
+app.post('/webhook', (req, res) => {
+  bot.processUpdate(req.body);
+  res.sendStatus(200);
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
 
 // Listen for messages and command events
 bot.onText(/\/start/, (msg) => {
