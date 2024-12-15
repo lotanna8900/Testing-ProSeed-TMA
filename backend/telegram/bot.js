@@ -7,6 +7,12 @@ connectDB();
 
 // Replace with your own Telegram bot token
 const token = process.env.TELEGRAM_BOT_TOKEN;
+if (!token) {
+  console.error("Telegram Bot Token not provided!");
+  process.exit(1);
+} else {
+  console.log("Telegram Bot Token is provided");
+}
 const bot = new TelegramBot(token, { polling: true });
 
 // Listen for messages and command events
