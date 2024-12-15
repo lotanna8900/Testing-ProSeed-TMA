@@ -27,8 +27,6 @@ app.post('/webhook', (req, res) => {
   res.sendStatus(200);
 });
 
-// Remove any server.listen calls
-
 // Listen for messages and command events
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
