@@ -55,6 +55,21 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  // Function to reset check-in status at midnight
+  useEffect(() => {
+    const resetCheckInStatus = () => {
+      setCheckInStatus(false);
+    };
+
+    const checkMidnight = () => {
+      const now = new Date();
+      const millisTillMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0) - now;
+      setTimeout(resetCheckInStatus, millisTillMidnight);
+    };
+
+    checkMidnight();
+  }, []);
+
   // Function to connect wallet and set wallet address
   const connectWallet = (address) => {
     setWalletAddress(address);
@@ -75,6 +90,7 @@ export const AppProvider = ({ children }) => {
       value={{
         user,
         psdtBalance,
+        setPsdtBalance, // Ensure this is included here
         walletAddress,
         loading,
         connectWallet,

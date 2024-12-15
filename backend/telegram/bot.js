@@ -33,7 +33,6 @@ bot.onText(/\/balance/, async (msg) => {
 bot.onText(/\/register/, async (msg) => {
   const chatId = msg.chat.id;
   try {
-    // Assuming chat ID is used as the wallet address for simplicity
     const existingUser = await User.findOne({ walletAddress: chatId });
     if (existingUser) {
       bot.sendMessage(chatId, 'You are already registered.');
@@ -45,5 +44,22 @@ bot.onText(/\/register/, async (msg) => {
   } catch (err) {
     console.error(err);
     bot.sendMessage(chatId, 'An error occurred during registration.');
+  }
+});
+
+bot.onText(/\/fetchID/, async (msg) => {
+  const chatId = msg.chat.id;
+  try {
+    const user = await User.findOne({ walletAddress: chatId });
+    if (user) {
+      user.telegramID = chatId;
+      await user.save();
+      bot.sendMessage(chatId, 'Telegram ID saved successfully.');
+    } else {
+      bot.sendMessage(chatId, 'User not found.');
+    }
+  } catch (err) {
+    console.error(err);
+    bot.sendMessage(chatId, 'An error occurred while fetching your Telegram ID.');
   }
 });

@@ -45,3 +45,22 @@ exports.createUser = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+// Function to retrieve user's Telegram ID and update in user profile
+exports.fetchTelegramID = async (req, res) => {
+  const { telegramID } = req.body;
+
+  try {
+    const user = await User.findOneAndUpdate(
+      { telegramID },
+      { $set: { telegramID } },
+      { new: true }
+    );
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
