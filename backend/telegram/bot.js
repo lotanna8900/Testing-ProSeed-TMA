@@ -2,9 +2,20 @@ const express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
 const connectDB = require('../config/db');
 const User = require('../models/User');
+const rateLimit = require('express-rate-limit');
 
 // Initialize the database connection
 connectDB();
+
+// Implement rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+});
+
+const app = express();
+app.use(express.json());
+app.use(limiter);
 
 // Replace with your own Telegram bot token
 const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -16,8 +27,6 @@ if (!token) {
 }
 
 const bot = new TelegramBot(token, { webHook: true });
-const app = express();
-app.use(express.json());
 
 // Set the webhook endpoint
 bot.setWebHook(`https://testing-pro-seed-kw59ai8cl-lotannas-projects-15b9a9b3.vercel.app/webhook`);
