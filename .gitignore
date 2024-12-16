@@ -9,7 +9,8 @@
 /coverage
 
 # production
-/build
+# Remove /build from here so it's not ignored
+#.build
 
 # misc
 .DS_Store
