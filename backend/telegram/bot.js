@@ -29,7 +29,7 @@ if (!token) {
 const bot = new TelegramBot(token, { webHook: true });
 
 // Set the webhook endpoint
-bot.setWebHook(`https://testing-pro-seed-kw59ai8cl-lotannas-projects-15b9a9b3.vercel.app/webhook`);
+bot.setWebHook(`https://proseedtesting.netlify.app/webhook`);
 
 app.post('/webhook', (req, res) => {
   bot.processUpdate(req.body);
