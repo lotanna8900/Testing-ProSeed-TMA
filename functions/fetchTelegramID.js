@@ -3,6 +3,9 @@ const axios = require('axios');
 exports.handler = async (event, context) => {
   try {
     const { username } = JSON.parse(event.body);
+    if (!username) {
+      throw new Error('Username is required');
+    }
     const response = await axios.get(`/api/users/getUserID?username=${username}`);
     return {
       statusCode: 200,
@@ -16,3 +19,4 @@ exports.handler = async (event, context) => {
     };
   }
 };
+
