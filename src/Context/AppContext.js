@@ -30,6 +30,20 @@ export const AppProvider = ({ children }) => {
     fetchUserData();
   }, [walletAddress]);
 
+  // Function to register the user automatically
+  const registerUserAutomatically = async (telegramUser) => {
+    try {
+      const response = await fetch('/.netlify/functions/registerUser', {
+        method: 'POST',
+        body: JSON.stringify({ username: telegramUser.username, telegramID: telegramUser.id }),
+      });
+      const data = await response.json();
+      setUser(data);
+    } catch (error) {
+      console.error('Error registering user:', error);
+    }
+  };
+
   // Function to update the user's PSDT balance
   const updateBalance = async (newBalance) => {
     if (!user || !user._id) {
@@ -113,6 +127,7 @@ export const AppProvider = ({ children }) => {
         fetchTelegramID,
         handleDailyCheckIn,
         checkInStatus,
+        registerUserAutomatically,
       }}
     >
       {children}
