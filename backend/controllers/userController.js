@@ -17,13 +17,8 @@ exports.getUserById = async (req, res) => {
 exports.updateUserBalance = async (req, res) => {
   const { id } = req.params;
   const { balance } = req.body;
-
   try {
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      { psdtBalance: balance },
-      { new: true }
-    );
+    const updatedUser = await User.findByIdAndUpdate(id, { psdtBalance: balance }, { new: true });
     if (!updatedUser) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -36,7 +31,6 @@ exports.updateUserBalance = async (req, res) => {
 // Create or register a new user
 exports.createUser = async (req, res) => {
   const { username, walletAddress } = req.body;
-
   try {
     const newUser = new User({ username, walletAddress, psdtBalance: 0 });
     await newUser.save();
@@ -49,13 +43,8 @@ exports.createUser = async (req, res) => {
 // Function to retrieve user's Telegram ID and update in user profile
 exports.fetchTelegramID = async (req, res) => {
   const { telegramID } = req.body;
-
   try {
-    const user = await User.findOneAndUpdate(
-      { telegramID },
-      { $set: { telegramID } },
-      { new: true }
-    );
+    const user = await User.findOneAndUpdate({ telegramID }, { $set: { telegramID } }, { new: true });
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -64,3 +53,4 @@ exports.fetchTelegramID = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+

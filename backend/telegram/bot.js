@@ -1,11 +1,14 @@
 const express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
-const connectDB = require('../config/db');
-const User = require('../models/User');
+const { MongoClient } = require('mongodb');
 const rateLimit = require('express-rate-limit');
 
+// MongoDB connection URI and database name
+const uri = 'mongodb+srv://lotanna8900:lotanna8900@proseedtesting.fnvp5.mongodb.net/?retryWrites=true&w=majority&appName=ProseedTesting';
+const dbName = 'proseed';
+
 // Initialize the database connection
-connectDB();
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Implement rate limiting
 const limiter = rateLimit({
@@ -17,23 +20,39 @@ const app = express();
 app.use(express.json());
 app.use(limiter);
 
-// Replace with your own Telegram bot token
-const token = process.env.TELEGRAM_BOT_TOKEN;
-if (!token) {
-  console.error("Telegram Bot Token not provided!");
-  process.exit(1);
-} else {
-  console.log("Telegram Bot Token is provided");
-}
-
+// Telegram bot token
+const token = '7081906465:AAGouHJ-9KoKZLY5_IS0umVfFLfzVCqcoks';
 const bot = new TelegramBot(token, { webHook: true });
 
 // Set the webhook endpoint
-bot.setWebHook(`https://proseedtesting.netlify.app/webhook`);
+bot.setWebHook(`https://proseedtesting.netlify.app/.netlify/functions/webhook`);
 
-app.post('/webhook', (req, res) => {
-  bot.processUpdate(req.body);
-  res.sendStatus(200);
+// Webhook endpoint to process updates from Telegram
+app.post('/webhook', async (req, res) => {
+  try {
+    const { message } = req.body;
+    const chatId = message.chat.id;
+    const username = message.from.username;
+
+    await client.connect();
+    const database = client.db(dbName);
+    const users = database.collection('users');
+
+    // Register user
+    await users.updateOne(
+      { telegramId: chatId },
+      { $set: { telegramId: chatId, username: username } },
+      { upsert: true }
+    );
+
+    bot.processUpdate(req.body);
+    res.sendStatus(200);
+  } catch (error) {
+    console.error('Error processing webhook:', error);
+    res.sendStatus(500);
+  } finally {
+    await client.close();
+  }
 });
 
 // Listen for messages and command events
@@ -45,7 +64,9 @@ bot.onText(/\/start/, (msg) => {
 bot.onText(/\/balance/, async (msg) => {
   const chatId = msg.chat.id;
   try {
-    const user = await User.findOne({ walletAddress: chatId });
+    await client.connect();
+    const database = client.db(dbName);
+    const user = await database.collection('users').findOne({ telegramId: chatId });
     if (user) {
       bot.sendMessage(chatId, `Your current PSDT balance is: ${user.psdtBalance}`);
     } else {
@@ -54,33 +75,40 @@ bot.onText(/\/balance/, async (msg) => {
   } catch (err) {
     console.error(err);
     bot.sendMessage(chatId, 'An error occurred while fetching your balance.');
+  } finally {
+    await client.close();
   }
 });
 
 bot.onText(/\/register/, async (msg) => {
   const chatId = msg.chat.id;
   try {
-    const existingUser = await User.findOne({ walletAddress: chatId });
+    await client.connect();
+    const database = client.db(dbName);
+    const existingUser = await database.collection('users').findOne({ telegramId: chatId });
     if (existingUser) {
       bot.sendMessage(chatId, 'You are already registered.');
     } else {
-      const newUser = new User({ username: msg.from.username, walletAddress: chatId });
-      await newUser.save();
+      await database.collection('users').insertOne({ username: msg.from.username, telegramId: chatId });
       bot.sendMessage(chatId, 'Registration successful!');
     }
   } catch (err) {
     console.error(err);
     bot.sendMessage(chatId, 'An error occurred during registration.');
+  } finally {
+    await client.close();
   }
 });
 
 bot.onText(/\/fetchID/, async (msg) => {
   const chatId = msg.chat.id;
   try {
-    const user = await User.findOne({ walletAddress: chatId });
+    await client.connect();
+    const database = client.db(dbName);
+    const user = await database.collection('users').findOne({ telegramId: chatId });
     if (user) {
       user.telegramID = chatId;
-      await user.save();
+      await database.collection('users').updateOne({ telegramId: chatId }, { $set: { telegramID: chatId } });
       bot.sendMessage(chatId, 'Telegram ID saved successfully.');
     } else {
       bot.sendMessage(chatId, 'User not found.');
@@ -88,6 +116,8 @@ bot.onText(/\/fetchID/, async (msg) => {
   } catch (err) {
     console.error(err);
     bot.sendMessage(chatId, 'An error occurred while fetching your Telegram ID.');
+  } finally {
+    await client.close();
   }
 });
 

@@ -15,7 +15,6 @@ const Home = () => {
     registerUserAutomatically,
   } = useAppContext(); // Use the custom hook to access context
 
-  // Fetch user's Telegram ID when the component mounts
   useEffect(() => {
     if (user) {
       fetchTelegramID(); // Automatically retrieves user's Telegram ID
@@ -25,7 +24,6 @@ const Home = () => {
     }
   }, [fetchTelegramID, user, registerUserAutomatically]);
 
-  // Function for handling Daily Check-in
   const handleCheckIn = async () => {
     if (!checkInStatus) {
       await handleDailyCheckIn(); // Update context to reflect check-in status
@@ -82,6 +80,7 @@ const Home = () => {
 };
 
 export default Home;
+
 
 
 

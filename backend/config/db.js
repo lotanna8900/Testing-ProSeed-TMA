@@ -1,19 +1,9 @@
 const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-
-dotenv.config();
 
 const connectDB = async () => {
-  const uri = process.env.MONGO_URI;
-  if (!uri) {
-    console.error("MongoDB URI not provided!");
-    process.exit(1);
-  } else {
-    console.log("MongoDB URI is provided:", uri);
-  }
-
+  const uri = 'mongodb+srv://lotanna8900:lotanna8900@proseedtesting.fnvp5.mongodb.net/proseed';
   try {
-    const conn = await mongoose.connect(uri);
+    const conn = await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (err) {
     console.error(`Error: ${err.message}`);
@@ -22,3 +12,4 @@ const connectDB = async () => {
 };
 
 module.exports = connectDB;
+

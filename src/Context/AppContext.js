@@ -12,7 +12,6 @@ export const AppProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [checkInStatus, setCheckInStatus] = useState(false);
 
-  // Fetch user data when component mounts or wallet address changes
   useEffect(() => {
     const fetchUserData = async () => {
       if (!walletAddress) return; // Prevent API call if walletAddress is empty
@@ -30,7 +29,6 @@ export const AppProvider = ({ children }) => {
     fetchUserData();
   }, [walletAddress]);
 
-  // Function to register the user automatically
   const registerUserAutomatically = async (telegramUser) => {
     try {
       const response = await fetch('/.netlify/functions/registerUser', {
@@ -44,7 +42,6 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  // Function to update the user's PSDT balance
   const updateBalance = async (newBalance) => {
     if (!user || !user._id) {
       console.error('User data not available for balance update.');
@@ -63,7 +60,6 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  // Daily Check-in Function
   const handleDailyCheckIn = async () => {
     if (!checkInStatus) {
       const newBalance = psdtBalance + 100;
@@ -80,7 +76,6 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  // Function to reset check-in status at midnight
   useEffect(() => {
     const resetCheckInStatus = () => {
       setCheckInStatus(false);
@@ -95,12 +90,10 @@ export const AppProvider = ({ children }) => {
     checkMidnight();
   }, []);
 
-  // Function to connect wallet and set wallet address
   const connectWallet = (address) => {
     setWalletAddress(address);
   };
 
-  // Fetch Telegram ID
   const fetchTelegramID = async () => {
     try {
       const response = await fetch('/.netlify/functions/fetchTelegramID', {

@@ -7,3 +7,4 @@ router.get('/:id', userController.getUserById);
 router.put('/:id/balance', userController.updateUserBalance);
 
 module.exports = router;
+

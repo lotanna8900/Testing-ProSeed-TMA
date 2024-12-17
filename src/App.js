@@ -16,7 +16,6 @@ function App() {
         <NavigationBar />
         <div className="app-container">
           <Routes>
-            {/* Ensure JSX syntax by using <Component /> */}
             <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />
             <Route path="/opportunity" element={<Opportunity />} />
@@ -31,3 +30,4 @@ function App() {
 }
 
 export default App;
+
