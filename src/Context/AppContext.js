@@ -37,8 +37,12 @@ export const AppProvider = ({ children }) => {
       return;
     }
     try {
-      const response = await axios.put(`/api/users/${user._id}/balance`, { balance: newBalance });
-      setUser(response.data);
+      const response = await fetch('/.netlify/functions/updateBalance', {
+        method: 'POST',
+        body: JSON.stringify({ userId: user._id, newBalance }),
+      });
+      const data = await response.json();
+      setUser(data);
       setPsdtBalance(newBalance);
     } catch (error) {
       console.error('Error updating balance:', error);
@@ -46,12 +50,19 @@ export const AppProvider = ({ children }) => {
   };
 
   // Daily Check-in Function
-  const handleDailyCheckIn = () => {
+  const handleDailyCheckIn = async () => {
     if (!checkInStatus) {
       const newBalance = psdtBalance + 100;
-      setPsdtBalance(newBalance); // Update state
-      updateBalance(newBalance); // Persist to database
-      setCheckInStatus(true); // Disable further check-ins for the day
+      try {
+        await fetch('/.netlify/functions/updateBalance', {
+          method: 'POST',
+          body: JSON.stringify({ userId: user._id, newBalance }),
+        });
+        setPsdtBalance(newBalance);
+        setCheckInStatus(true);
+      } catch (error) {
+        console.error('Error updating balance:', error);
+      }
     }
   };
 
@@ -75,11 +86,15 @@ export const AppProvider = ({ children }) => {
     setWalletAddress(address);
   };
 
-  // Fetch Telegram ID (Mock logic for now)
+  // Fetch Telegram ID
   const fetchTelegramID = async () => {
     try {
-      console.log('Fetching Telegram ID...');
-      return { telegramID: '123456789' }; // Replace with actual logic
+      const response = await fetch('/.netlify/functions/fetchTelegramID', {
+        method: 'POST',
+        body: JSON.stringify({ username: user.username }),
+      });
+      const data = await response.json();
+      setUser((prevUser) => ({ ...prevUser, telegramID: data.telegramID }));
     } catch (error) {
       console.error('Error fetching Telegram ID:', error);
     }

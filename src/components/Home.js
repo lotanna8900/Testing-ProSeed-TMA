@@ -20,9 +20,9 @@ const Home = () => {
   }, [fetchTelegramID]);
 
   // Function for handling Daily Check-in
-  const handleCheckIn = () => {
+  const handleCheckIn = async () => {
     if (!checkInStatus) {
-      handleDailyCheckIn(); // Update context to reflect check-in status
+      await handleDailyCheckIn(); // Update context to reflect check-in status
       setPsdtBalance((prevBalance) => prevBalance + 100); // Add +100 PSDT to balance
       alert('Successfully checked in! +100 PSDT added to your balance.');
     }
@@ -76,4 +76,6 @@ const Home = () => {
 };
 
 export default Home;
+
+
 
