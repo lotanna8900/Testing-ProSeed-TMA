@@ -10,7 +10,7 @@ dotenv.config(); // Ensure dotenv is configured
 const uri = process.env.MONGO_URI; // Use environment variable
 const dbName = 'proseed';
 
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+const client = new MongoClient(uri);
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -24,44 +24,51 @@ app.use(limiter);
 const token = process.env.TELEGRAM_BOT_TOKEN; // Use environment variable
 const bot = new TelegramBot(token, { polling: true }); // Use polling
 
+bot.on('polling_error', (error) => {
+  console.error('Polling error:', error);
+});
+
 // Listen for messages and command events
 bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
   const username = msg.from.username || `${msg.from.first_name} ${msg.from.last_name}`.trim() || msg.from.first_name;
 
-  // Connect to MongoDB
-  await client.connect();
-  const database = client.db(dbName);
-  const users = database.collection('users');
+  try {
+    await client.connect();
+    const database = client.db(dbName);
+    const users = database.collection('users');
 
-  // Register or update user
-  await users.updateOne(
-    { telegramId: chatId },
-    { $set: { telegramId: chatId, username: username } },
-    { upsert: true }
-  );
+    // Register or update user
+    await users.updateOne(
+      { telegramId: chatId },
+      { $set: { telegramId: chatId, username: username } },
+      { upsert: true }
+    );
 
-  // Generate the welcome message
-  const welcomeMessage = `Welcome to proSEED, ${username}!\nYour ID: ${chatId}`;
+    // Generate the welcome message
+    const welcomeMessage = `Welcome to proSEED, ${username}!\nYour ID: ${chatId}`;
 
-  // Define the button
-  const options = {
-    reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: 'Start App',
-            url: 'https://proseedtesting.netlify.app/app', // Link to your mini app
-          },
+    // Define the button
+    const options = {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: 'Start App',
+              url: 'https://proseedtesting.netlify.app/app', // Link to your mini app
+            },
+          ],
         ],
-      ],
-    },
-  };
+      },
+    };
 
-  // Send the welcome message with the button
-  bot.sendMessage(chatId, welcomeMessage, options);
-
-  await client.close();
+    // Send the welcome message with the button
+    bot.sendMessage(chatId, welcomeMessage, options);
+  } catch (error) {
+    console.error('Error handling /start command:', error);
+  } finally {
+    await client.close();
+  }
 });
 
 // Handle balance command
@@ -76,8 +83,8 @@ bot.onText(/\/balance/, async (msg) => {
     } else {
       bot.sendMessage(chatId, 'User not found. Please register first.');
     }
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error('Error handling /balance command:', error);
     bot.sendMessage(chatId, 'An error occurred while fetching your balance.');
   } finally {
     await client.close();
@@ -97,8 +104,8 @@ bot.onText(/\/register/, async (msg) => {
       await database.collection('users').insertOne({ username: msg.from.username || `${msg.from.first_name} ${msg.from.last_name}`.trim() || msg.from.first_name, telegramId: chatId });
       bot.sendMessage(chatId, 'Registration successful!');
     }
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error('Error handling /register command:', error);
     bot.sendMessage(chatId, 'An error occurred during registration.');
   } finally {
     await client.close();
@@ -119,8 +126,8 @@ bot.onText(/\/fetchID/, async (msg) => {
     } else {
       bot.sendMessage(chatId, 'User not found.');
     }
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error('Error handling /fetchID command:', error);
     bot.sendMessage(chatId, 'An error occurred while fetching your Telegram ID.');
   } finally {
     await client.close();
@@ -134,6 +141,7 @@ app.listen(PORT, () => {
 });
 
 export default app;
+
 
 
 
