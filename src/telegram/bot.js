@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 dotenv.config(); // Ensure dotenv is configured
 
 // MongoDB connection URI and database name
-const uri = process.env.MONGO_URI;  // Use environment variable
+const uri = process.env.MONGO_URI; // Use environment variable
 const dbName = 'proseed';
 
 // Initialize the database connection
@@ -32,9 +32,20 @@ bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
   const username = msg.from.username;
 
+  await client.connect();
+  const database = client.db(dbName);
+  const users = database.collection('users');
+
+  // Register user
+  await users.updateOne(
+    { telegramId: chatId },
+    { $set: { telegramId: chatId, username: username } },
+    { upsert: true }
+  );
+
   // Generate the welcome message
   const welcomeMessage = `Welcome to proSEED, ${username}!\nYour ID: ${chatId}`;
-  
+
   // Define the button
   const options = {
     reply_markup: {
@@ -42,14 +53,16 @@ bot.onText(/\/start/, async (msg) => {
         [
           {
             text: 'Start App',
-            url: 'https://proseedtesting.netlify.app/app',  // Update this URL to your mini app's link
+            url: 'https://proseedtesting.netlify.app/app', // Update this URL to your mini app's link
           },
         ],
       ],
     },
   };
-  
+
   bot.sendMessage(chatId, welcomeMessage, options);
+
+  await client.close();
 });
 
 bot.onText(/\/balance/, async (msg) => {
@@ -120,5 +133,6 @@ app.listen(PORT, () => {
 
 // Export the app for serverless functions
 export default app;
+
 
 
