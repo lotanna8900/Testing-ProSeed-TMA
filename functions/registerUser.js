@@ -1,18 +1,24 @@
-const axios = require('axios');
+import { MongoClient } from 'mongodb';
 
-exports.handler = async (event, context) => {
+const uri = 'mongodb+srv://lotanna8900:lotanna8900@proseedtesting.fnvp5.mongodb.net/?retryWrites=true&w=majority&appName=ProseedTesting';
+const client = new MongoClient(uri);
+
+export const handler = async (event, context) => {
   try {
-    console.log('Received event:', event);
     const { username, walletAddress } = JSON.parse(event.body);
     if (!username || !walletAddress) {
       throw new Error('Username and wallet address are required');
     }
-    const apiUrl = 'https://proseedtesting.netlify.app/.netlify/functions/registerUser'; // Your actual API endpoint
-    const response = await axios.post(apiUrl, { username, walletAddress });
-    console.log('User registered successfully:', response.data);
+
+    await client.connect();
+    const database = client.db('proseed');
+    const users = database.collection('users');
+
+    const result = await users.insertOne({ username, walletAddress, psdtBalance: 0 });
+
     return {
-      statusCode: 200,
-      body: JSON.stringify(response.data),
+      statusCode: 201,
+      body: JSON.stringify(result.ops[0]),
     };
   } catch (error) {
     console.error('Error registering user:', error);
@@ -20,8 +26,11 @@ exports.handler = async (event, context) => {
       statusCode: 500,
       body: JSON.stringify({ error: 'Error registering user', details: error.message }),
     };
+  } finally {
+    await client.close();
   }
 };
+
 
 
 

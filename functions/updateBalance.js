@@ -1,19 +1,23 @@
-const axios = require('axios');
-
-exports.handler = async (event, context) => {
+export const handler = async (event, context) => {
   try {
     const { userId, newBalance } = JSON.parse(event.body);
     if (!userId || newBalance === undefined) {
       throw new Error('User ID and new balance are required');
     }
 
-    // Ensure the correct API endpoint is used
-    const apiUrl = `https://proseedtesting.netlify.app/.netlify/functions/updateBalance`; // Replace with your actual API endpoint
+    const apiUrl = `https://proseedtesting.netlify.app/api/users/${userId}/balance`; // Replace with your actual API endpoint
 
-    const response = await axios.put(apiUrl, { balance: newBalance });
+    const response = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ balance: newBalance })
+    });
+    const data = await response.json();
     return {
       statusCode: 200,
-      body: JSON.stringify(response.data),
+      body: JSON.stringify(data),
     };
   } catch (error) {
     console.error('Error updating balance:', error);
@@ -23,4 +27,5 @@ exports.handler = async (event, context) => {
     };
   }
 };
+
 

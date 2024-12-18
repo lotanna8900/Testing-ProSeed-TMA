@@ -1,12 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AppProvider } from './Context/AppContext';
-import Home from './components/Home';
-import Opportunity from './components/Opportunity';
-import Earn from './components/Earn';
-import Leaderboard from './components/Leaderboard';
-import Wallet from './components/Wallet';
-import NavigationBar from './components/NavigationBar';
+import { AppProvider } from './Context/AppContext.js';  // Add .js extension
+import Home from './components/Home.js';  // Add .js extension
+import Opportunity from './components/Opportunity.js';  // Add .js extension
+import Earn from './components/Earn.js';  // Add .js extension
+import Leaderboard from './components/Leaderboard.js';  // Add .js extension
+import Wallet from './components/Wallet.js';  // Add .js extension
+import NavigationBar from './components/NavigationBar.js';  // Add .js extension
 import './App.css';
 
 function App() {
