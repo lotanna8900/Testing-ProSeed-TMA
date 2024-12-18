@@ -56,6 +56,7 @@ client.connect()
       }
     });
 
+
     // Other server routes and middleware
     app.use('/api', bot); // Assuming you have additional API routes defined in bot.js
   })
