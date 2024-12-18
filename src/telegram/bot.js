@@ -64,27 +64,22 @@ bot.onText(/\/start/, async (msg) => {
     // Generate the welcome message
     const welcomeMessage = `Welcome to proSEED, ${username}!\nYour ID: ${chatId}`;
 
-    // Define the button
+    // Define the Web App button
     const options = {
       reply_markup: {
         inline_keyboard: [
           [
             {
               text: 'Start App',
-              url: 'https://proseedtesting.netlify.app/app', // Link to your mini app
+              web_app: { url: 'https://proseedtesting.netlify.app/app' }, // Open the Web App within Telegram
             },
           ],
         ],
       },
     };
 
-    // Example usage of fetchData with retry mechanism
-    try {
-      const data = await fetchData('https://api.telegram.org', { timeout: 5000 });
-      bot.sendMessage(chatId, welcomeMessage, options);
-    } catch (error) {
-      console.error('Failed to send welcome message:', error);
-    }
+    // Send the welcome message with the button
+    bot.sendMessage(chatId, welcomeMessage, options);
   } catch (error) {
     console.error('Error handling /start command:', error);
   } finally {
@@ -162,6 +157,7 @@ app.listen(PORT, () => {
 });
 
 export default app;
+
 
 
 
