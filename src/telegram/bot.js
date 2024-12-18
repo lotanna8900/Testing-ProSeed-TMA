@@ -96,6 +96,7 @@ bot.onText(/\/start/, async (msg) => {
 });
 
 
+
 // Handle balance command
 bot.onText(/\/balance/, async (msg) => {
   const chatId = msg.chat.id;
