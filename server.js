@@ -4,6 +4,7 @@ import userRoutes from './routes/userRoutes.js';
 import path from 'path';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
+import { MongoClient } from 'mongodb';
 import bot from './src/telegram/bot.js';  // Correct the path if necessary
 
 dotenv.config();
@@ -18,6 +19,41 @@ app.use(express.json());
 
 // Use routes
 app.use('/api/users', userRoutes);
+
+const uri = process.env.MONGO_URI;  // Use environment variable
+const dbName = 'proseed';
+
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
+client.connect()
+  .then(() => {
+    console.log('MongoDB Connected');
+
+    // Define the fetchTelegramID route
+    app.get('/api/fetchTelegramID', async (req, res) => {
+      try {
+        const telegramID = req.query.telegramId;
+        const database = client.db(dbName);
+        const users = database.collection('users');
+        const user = await users.findOne({ telegramId: telegramID });
+
+        if (user) {
+          res.json({ telegramID: user.telegramId });
+        } else {
+          res.status(404).json({ error: 'User not found' });
+        }
+      } catch (error) {
+        console.error('Error fetching Telegram ID:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+    });
+
+    // Other server routes and middleware
+    app.use('/api', bot); // Assuming you have additional API routes defined in bot.js
+  })
+  .catch(err => {
+    console.error('MongoDB connection error:', err);
+  });
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,5 +78,6 @@ app.listen(PORT, () => {
 });
 
 export default app;
+
 
 
