@@ -23,7 +23,7 @@ const Home = () => {
       // Fetch from server if not in local storage
       const fetchTelegramIDFromServer = async () => {
         try {
-          const response = await fetch('/api/fetchTelegramID?telegramId=<replace_with_actual_id>');
+          const response = await fetch(`https://api.yourdomain.com/api/fetchTelegramID?telegramId=<actual_telegram_id>`);
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
@@ -97,6 +97,9 @@ const Home = () => {
 };
 
 export default Home;
+
+
+
 
 
 

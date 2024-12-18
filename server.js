@@ -6,10 +6,18 @@ import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { MongoClient } from 'mongodb';
 import bot from './src/telegram/bot.js';  // Correct the path if necessary
+import cors from 'cors'; // Import CORS
 
 dotenv.config();
 
 const app = express();
+
+// Use CORS middleware
+app.use(cors({
+  origin: 'https://proseedtesting.netlify.app',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+}));
 
 // Connect to the database
 connectDB();
@@ -35,7 +43,7 @@ client.connect()
         const telegramID = req.query.telegramId;
         const database = client.db(dbName);
         const users = database.collection('users');
-        const user = await users.findOne({ telegramId: telegramID });
+        const user = await users.findOne({ telegramId: Number(telegramID) });
 
         if (user) {
           res.json({ telegramID: user.telegramId });
@@ -59,16 +67,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, 'build')));
+app.use('/static', express.static(path.join(__dirname, 'build', 'static')));
+app.use('/styles.css', express.static(path.join(__dirname, 'build', 'styles.css')));
+app.use('/main.js', express.static(path.join(__dirname, 'build', 'main.js')));
 
-// Define a simple route
+// Catch-all route to serve index.html for SPA
 app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
-// Catch-all route to serve index.html
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+  res.sendFile(path.join(__dirname, 'build', 'index.html'), (err) => {
+    if (err) {
+      res.status(500).send(err);
+    }
+  });
 });
 
 // Listen on a different port (e.g., 3001)
@@ -78,6 +87,12 @@ app.listen(PORT, () => {
 });
 
 export default app;
+
+
+
+
+
+
 
 
 
