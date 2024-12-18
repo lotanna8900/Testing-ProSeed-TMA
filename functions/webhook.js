@@ -6,15 +6,22 @@ const client = new MongoClient(uri);
 
 export async function handler(event, context) {
   try {
+    // Log the entire event and context for debugging purposes
+    console.log('Received event:', JSON.stringify(event));
+    console.log('Received context:', JSON.stringify(context));
+
+    // Check if event body is not empty
     if (!event.body) {
       throw new Error('Request body is empty');
     }
 
-    console.log('Received event body:', event.body);
-    
+    // Parse the JSON body and log it
     const body = JSON.parse(event.body);
+    console.log('Parsed body:', body);
+
     const { message } = body;
 
+    // Validate the message structure
     if (!message || !message.chat || !message.from) {
       throw new Error('Invalid message format');
     }
@@ -51,6 +58,7 @@ export async function handler(event, context) {
     await client.close();
   }
 }
+
 
 
 
