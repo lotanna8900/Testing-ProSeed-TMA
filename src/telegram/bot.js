@@ -60,13 +60,14 @@ bot.onText(/\/start/, async (msg) => {
     const users = database.collection('users');
 
     // Register or update user
-    await users.updateOne(
+    const result = await users.updateOne(
       { telegramId: chatId },
       { $set: { telegramId: chatId, username: username } },
       { upsert: true }
     );
 
-    // Note: localStorage is not available in server-side code. We handle this in the client-side.
+    // Log the result for debugging
+    console.log('User registration result:', result);
 
     // Generate the welcome message
     const welcomeMessage = `Welcome to proSEED, ${username}!\nYour ID: ${chatId}`;
