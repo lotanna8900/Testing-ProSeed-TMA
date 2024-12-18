@@ -27,6 +27,11 @@ const bot = new TelegramBot(token, { polling: true }); // Use polling
 
 bot.on('polling_error', (error) => {
   console.error('Polling error:', error);
+
+  // Retry mechanism for polling errors
+  setTimeout(() => {
+    bot.startPolling();
+  }, 5000); // Retry after 5 seconds
 });
 
 // Retry mechanism for network requests
@@ -157,7 +162,6 @@ app.listen(PORT, () => {
 });
 
 export default app;
-
 
 
 
