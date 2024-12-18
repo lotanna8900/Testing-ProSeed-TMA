@@ -1,10 +1,10 @@
-const { MongoClient } = require('mongodb');
-const fetch = require('node-fetch');
+import { MongoClient } from 'mongodb';
+import fetch from 'node-fetch';
 
 const uri = 'mongodb+srv://lotanna8900:lotanna8900@proseedtesting.fnvp5.mongodb.net/?retryWrites=true&w=majority&appName=ProseedTesting';
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+const client = new MongoClient(uri);
 
-exports.handler = async (event, context) => {
+export async function handler(event, context) {
   try {
     if (!event.body) {
       throw new Error('Request body is empty');
@@ -50,5 +50,7 @@ exports.handler = async (event, context) => {
   } finally {
     await client.close();
   }
-};
+}
+
+
 

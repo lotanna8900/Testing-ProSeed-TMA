@@ -1,7 +1,7 @@
-const User = require('../models/User');
+import User from '../models/User.js';
 
 // Get user data by ID
-exports.getUserById = async (req, res) => {
+export const getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
@@ -14,7 +14,7 @@ exports.getUserById = async (req, res) => {
 };
 
 // Update user PSDT balance
-exports.updateUserBalance = async (req, res) => {
+export const updateUserBalance = async (req, res) => {
   const { id } = req.params;
   const { balance } = req.body;
   try {
@@ -29,7 +29,7 @@ exports.updateUserBalance = async (req, res) => {
 };
 
 // Create or register a new user
-exports.createUser = async (req, res) => {
+export const createUser = async (req, res) => {
   const { username, walletAddress } = req.body;
   try {
     const newUser = new User({ username, walletAddress, psdtBalance: 0 });
@@ -41,7 +41,7 @@ exports.createUser = async (req, res) => {
 };
 
 // Function to retrieve user's Telegram ID and update in user profile
-exports.fetchTelegramID = async (req, res) => {
+export const fetchTelegramID = async (req, res) => {
   const { telegramID } = req.body;
   try {
     const user = await User.findOneAndUpdate({ telegramID }, { $set: { telegramID } }, { new: true });
@@ -53,4 +53,5 @@ exports.fetchTelegramID = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 

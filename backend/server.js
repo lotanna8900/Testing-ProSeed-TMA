@@ -1,7 +1,11 @@
-const express = require('express');
-const connectDB = require('./config/db');
-const userRoutes = require('./routes/userRoutes');
-const path = require('path');
+import express from 'express';
+import connectDB from './config/db.js';
+import userRoutes from './routes/userRoutes.js';
+import path from 'path';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+
+dotenv.config();
 
 const app = express();
 
@@ -13,6 +17,9 @@ app.use(express.json());
 
 // Use routes
 app.use('/api/users', userRoutes);
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, '..', 'build')));
@@ -33,6 +40,6 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-// Export the app for Vercel's serverless functions
-module.exports = app;
+export default app;
+
 
