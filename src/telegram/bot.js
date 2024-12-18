@@ -25,38 +25,7 @@ app.use(limiter);
 
 // Telegram bot token
 const token = process.env.TELEGRAM_BOT_TOKEN; // Use environment variable
-const bot = new TelegramBot(token, { webHook: true });
-
-// Set the webhook endpoint
-bot.setWebHook(`https://proseedtesting.netlify.app/.netlify/functions/webhook`);
-
-// Webhook endpoint to process updates from Telegram
-app.post('/webhook', async (req, res) => {
-  try {
-    const { message } = req.body;
-    const chatId = message.chat.id;
-    const username = message.from.username;
-
-    await client.connect();
-    const database = client.db(dbName);
-    const users = database.collection('users');
-
-    // Register user
-    await users.updateOne(
-      { telegramId: chatId },
-      { $set: { telegramId: chatId, username: username } },
-      { upsert: true }
-    );
-
-    bot.processUpdate(req.body);
-    res.sendStatus(200);
-  } catch (error) {
-    console.error('Error processing webhook:', error);
-    res.sendStatus(500);
-  } finally {
-    await client.close();
-  }
-});
+const bot = new TelegramBot(token, { polling: true }); // Change to polling
 
 // Listen for messages and command events
 bot.onText(/\/start/, async (msg) => {
@@ -143,6 +112,13 @@ bot.onText(/\/fetchID/, async (msg) => {
   }
 });
 
+// Start express server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
 // Export the app for serverless functions
 export default app;
+
 
