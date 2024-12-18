@@ -6,13 +6,10 @@ import { FaTelegram, FaTwitter } from 'react-icons/fa'; // Icons for community l
 
 const Home = () => {
   const {
-    user, // Assuming 'user' contains currentUser info
     psdtBalance,
     setPsdtBalance,
     handleDailyCheckIn,
     checkInStatus,
-    fetchTelegramID,
-    registerUserAutomatically,
   } = useAppContext(); // Use the custom hook to access context
 
   const [telegramID, setTelegramID] = useState('');
@@ -95,5 +92,6 @@ const Home = () => {
 };
 
 export default Home;
+
 
 
