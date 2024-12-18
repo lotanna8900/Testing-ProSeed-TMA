@@ -1,3 +1,5 @@
+import fetch from 'node-fetch';
+
 export const handler = async (event, context) => {
   try {
     const { userId, newBalance } = JSON.parse(event.body);
@@ -5,14 +7,15 @@ export const handler = async (event, context) => {
       throw new Error('User ID and new balance are required');
     }
 
-    const apiUrl = `https://proseedtesting.netlify.app/api/users/${userId}/balance`; // Replace with your actual API endpoint
+    // Use the Netlify function endpoint
+    const apiUrl = `https://proseedtesting.netlify.app/.netlify/functions/updateBalance`;
 
     const response = await fetch(apiUrl, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ balance: newBalance })
+      body: JSON.stringify({ userId, balance: newBalance })
     });
     const data = await response.json();
     return {
@@ -27,5 +30,6 @@ export const handler = async (event, context) => {
     };
   }
 };
+
 
 
