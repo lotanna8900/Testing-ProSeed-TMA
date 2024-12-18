@@ -66,6 +66,8 @@ bot.onText(/\/start/, async (msg) => {
       { upsert: true }
     );
 
+    // Note: localStorage is not available in server-side code. We handle this in the client-side.
+
     // Generate the welcome message
     const welcomeMessage = `Welcome to proSEED, ${username}!\nYour ID: ${chatId}`;
 
@@ -91,6 +93,7 @@ bot.onText(/\/start/, async (msg) => {
     await client.close();
   }
 });
+
 
 // Handle balance command
 bot.onText(/\/balance/, async (msg) => {

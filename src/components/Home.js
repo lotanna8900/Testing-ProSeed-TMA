@@ -23,12 +23,14 @@ const Home = () => {
       // Fetch from server if not in local storage
       const fetchTelegramIDFromServer = async () => {
         try {
-          const response = await fetch(`/api/fetchTelegramID?telegramId=${storedTelegramID}`);
+          const response = await fetch('/api/fetchTelegramID?telegramId=<replace_with_actual_id>');
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
           const data = await response.json();
           setTelegramID(data.telegramID || 'Loading...');
+          // Store Telegram ID in local storage
+          localStorage.setItem('telegramId', data.telegramID || 'Error loading ID');
         } catch (error) {
           console.error('Error fetching Telegram ID:', error);
           setTelegramID('Error loading ID');
@@ -37,7 +39,7 @@ const Home = () => {
 
       fetchTelegramIDFromServer();
     }
-  }, [handleDailyCheckIn, checkInStatus, psdtBalance]); // Add handleDailyCheckIn, checkInStatus, psdtBalance to dependency array
+  }, []);
 
   const handleCheckIn = async () => {
     if (!checkInStatus) {
@@ -95,6 +97,7 @@ const Home = () => {
 };
 
 export default Home;
+
 
 
 
