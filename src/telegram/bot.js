@@ -3,6 +3,7 @@ import TelegramBot from 'node-telegram-bot-api';
 import { MongoClient } from 'mongodb';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
+import axios from 'axios'; // Import axios for network requests
 
 dotenv.config(); // Ensure dotenv is configured
 
@@ -27,6 +28,21 @@ const bot = new TelegramBot(token, { polling: true }); // Use polling
 bot.on('polling_error', (error) => {
   console.error('Polling error:', error);
 });
+
+// Retry mechanism for network requests
+const fetchData = async (url, options, retries = 3) => {
+  try {
+    const response = await axios.get(url, options);
+    return response.data;
+  } catch (error) {
+    if (retries > 0) {
+      console.log(`Retrying... ${retries} retries left`);
+      return fetchData(url, options, retries - 1);
+    } else {
+      throw error;
+    }
+  }
+};
 
 // Listen for messages and command events
 bot.onText(/\/start/, async (msg) => {
@@ -62,8 +78,13 @@ bot.onText(/\/start/, async (msg) => {
       },
     };
 
-    // Send the welcome message with the button
-    bot.sendMessage(chatId, welcomeMessage, options);
+    // Example usage of fetchData with retry mechanism
+    try {
+      const data = await fetchData('https://api.telegram.org', { timeout: 5000 });
+      bot.sendMessage(chatId, welcomeMessage, options);
+    } catch (error) {
+      console.error('Failed to send welcome message:', error);
+    }
   } catch (error) {
     console.error('Error handling /start command:', error);
   } finally {
@@ -141,6 +162,7 @@ app.listen(PORT, () => {
 });
 
 export default app;
+
 
 
 

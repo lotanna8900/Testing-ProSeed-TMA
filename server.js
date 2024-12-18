@@ -23,7 +23,7 @@ app.use('/api/users', userRoutes);
 const uri = process.env.MONGO_URI;  // Use environment variable
 const dbName = 'proseed';
 
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+const client = new MongoClient(uri); // Removed deprecated options
 
 client.connect()
   .then(() => {
@@ -78,6 +78,7 @@ app.listen(PORT, () => {
 });
 
 export default app;
+
 
 
 
