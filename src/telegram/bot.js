@@ -10,10 +10,8 @@ dotenv.config(); // Ensure dotenv is configured
 const uri = process.env.MONGO_URI; // Use environment variable
 const dbName = 'proseed';
 
-// Initialize the database connection
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-// Implement rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // Limit each IP to 100 requests per windowMs
@@ -23,20 +21,20 @@ const app = express();
 app.use(express.json());
 app.use(limiter);
 
-// Telegram bot token
 const token = process.env.TELEGRAM_BOT_TOKEN; // Use environment variable
-const bot = new TelegramBot(token, { polling: true }); // Change to polling
+const bot = new TelegramBot(token, { polling: true }); // Use polling
 
 // Listen for messages and command events
 bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
-  const username = msg.from.username;
+  const username = msg.from.username || `${msg.from.first_name} ${msg.from.last_name}`.trim() || msg.from.first_name;
 
+  // Connect to MongoDB
   await client.connect();
   const database = client.db(dbName);
   const users = database.collection('users');
 
-  // Register user
+  // Register or update user
   await users.updateOne(
     { telegramId: chatId },
     { $set: { telegramId: chatId, username: username } },
@@ -53,18 +51,20 @@ bot.onText(/\/start/, async (msg) => {
         [
           {
             text: 'Start App',
-            url: 'https://proseedtesting.netlify.app/app', // Update this URL to your mini app's link
+            url: 'https://proseedtesting.netlify.app/app', // Link to your mini app
           },
         ],
       ],
     },
   };
 
+  // Send the welcome message with the button
   bot.sendMessage(chatId, welcomeMessage, options);
 
   await client.close();
 });
 
+// Handle balance command
 bot.onText(/\/balance/, async (msg) => {
   const chatId = msg.chat.id;
   try {
@@ -84,6 +84,7 @@ bot.onText(/\/balance/, async (msg) => {
   }
 });
 
+// Handle register command
 bot.onText(/\/register/, async (msg) => {
   const chatId = msg.chat.id;
   try {
@@ -93,7 +94,7 @@ bot.onText(/\/register/, async (msg) => {
     if (existingUser) {
       bot.sendMessage(chatId, 'You are already registered.');
     } else {
-      await database.collection('users').insertOne({ username: msg.from.username, telegramId: chatId });
+      await database.collection('users').insertOne({ username: msg.from.username || `${msg.from.first_name} ${msg.from.last_name}`.trim() || msg.from.first_name, telegramId: chatId });
       bot.sendMessage(chatId, 'Registration successful!');
     }
   } catch (err) {
@@ -104,6 +105,7 @@ bot.onText(/\/register/, async (msg) => {
   }
 });
 
+// Handle fetchID command
 bot.onText(/\/fetchID/, async (msg) => {
   const chatId = msg.chat.id;
   try {
@@ -131,7 +133,6 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-// Export the app for serverless functions
 export default app;
 
 

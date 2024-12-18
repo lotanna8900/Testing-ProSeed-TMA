@@ -18,19 +18,25 @@ const Home = () => {
   const [telegramID, setTelegramID] = useState('');
 
   useEffect(() => {
-    // Fetch Telegram ID from server
-    const fetchTelegramIDFromServer = async () => {
-      try {
-        const response = await fetch('/api/fetchTelegramID');
-        const data = await response.json();
-        setTelegramID(data.telegramID || 'Loading...');
-      } catch (error) {
-        console.error('Error fetching Telegram ID:', error);
-        setTelegramID('Error loading ID');
-      }
-    };
+    // Fetch Telegram ID from local storage
+    const storedTelegramID = localStorage.getItem('telegramId');
+    if (storedTelegramID) {
+      setTelegramID(storedTelegramID);
+    } else {
+      // Fetch from server if not in local storage
+      const fetchTelegramIDFromServer = async () => {
+        try {
+          const response = await fetch('/api/fetchTelegramID');
+          const data = await response.json();
+          setTelegramID(data.telegramID || 'Loading...');
+        } catch (error) {
+          console.error('Error fetching Telegram ID:', error);
+          setTelegramID('Error loading ID');
+        }
+      };
 
-    fetchTelegramIDFromServer();
+      fetchTelegramIDFromServer();
+    }
   }, []);
 
   const handleCheckIn = async () => {
@@ -89,4 +95,5 @@ const Home = () => {
 };
 
 export default Home;
+
 
