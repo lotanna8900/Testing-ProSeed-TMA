@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Opportunity.css';
-import NavigationBar from './NavigationBar';
+import NavigationBar from './NavigationBar.js';  // Add .js extension
 
 const Opportunity = () => {
   const [activeTab, setActiveTab] = useState('Collaborations');
@@ -46,7 +46,7 @@ const Opportunity = () => {
     },
     {
       position: 'Product Designer at Solayer',
-      description: 'A restating network on Solana.',
+      description: 'A restaking network on Solana.',
       link: 'https://jobs.solana.com/companies/solayer-labs/jobs/41878825-product-designer#content',
     },
     {
@@ -105,3 +105,4 @@ const Opportunity = () => {
 };
 
 export default Opportunity;
+

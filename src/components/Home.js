@@ -1,33 +1,33 @@
 import React, { useEffect } from 'react';
-import { useAppContext } from '../Context/AppContext'; // Import the custom hook
-import NavigationBar from './NavigationBar';
-import './Home.css'; // CSS for styling the Home segment
-import { FaTelegram, FaTwitter } from 'react-icons/fa'; // Icons for community links
+import { useAppContext } from '../Context/AppContext.js';  // Add .js extension
+import NavigationBar from './NavigationBar.js';  // Add .js extension
+import './Home.css';  // CSS for styling the Home segment
+import { FaTelegram, FaTwitter } from 'react-icons/fa';  // Icons for community links
 
 const Home = () => {
   const {
-    user, // Assuming 'user' contains currentUser info
+    user,  // Assuming 'user' contains currentUser info
     psdtBalance,
-    setPsdtBalance, // Add function to update PSDT balance
+    setPsdtBalance,  // Add function to update PSDT balance
     handleDailyCheckIn,
     checkInStatus,
     fetchTelegramID,
     registerUserAutomatically,
-  } = useAppContext(); // Use the custom hook to access context
+  } = useAppContext();  // Use the custom hook to access context
 
   useEffect(() => {
     if (user) {
-      fetchTelegramID(); // Automatically retrieves user's Telegram ID
+      fetchTelegramID();  // Automatically retrieves user's Telegram ID
     } else {
-      const telegramUser = { username: 'username', id: 'telegramID' }; // Replace with actual Telegram user details
+      const telegramUser = { username: 'username', id: 'telegramID' };  // Replace with actual Telegram user details
       registerUserAutomatically(telegramUser);
     }
   }, [fetchTelegramID, user, registerUserAutomatically]);
 
   const handleCheckIn = async () => {
     if (!checkInStatus) {
-      await handleDailyCheckIn(); // Update context to reflect check-in status
-      setPsdtBalance((prevBalance) => prevBalance + 100); // Add +100 PSDT to balance
+      await handleDailyCheckIn();  // Update context to reflect check-in status
+      setPsdtBalance((prevBalance) => prevBalance + 100);  // Add +100 PSDT to balance
       alert('Successfully checked in! +100 PSDT added to your balance.');
     }
   };
@@ -59,7 +59,7 @@ const Home = () => {
       <div className="psdt-balance">
         <h2>$PSDT Balance</h2>
         <div className="balance-amount">
-          <span>{psdtBalance} PSDT</span> {/* Reflects opening balance and updates */}
+          <span>{psdtBalance} PSDT</span>  {/* Reflects opening balance and updates */}
         </div>
       </div>
 
@@ -80,8 +80,3 @@ const Home = () => {
 };
 
 export default Home;
-
-
-
-
-

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Earn.css';
 import { FaTelegram, FaTwitter, FaYoutube, FaInstagram, FaTiktok } from 'react-icons/fa';
-import NavigationBar from './NavigationBar';
+import NavigationBar from './NavigationBar.js';  // Add .js extension
 
 const Earn = ({ updateBalance, userBalance }) => {
   const [activeTab, setActiveTab] = useState('Direct Tasks');
@@ -160,3 +160,4 @@ const Earn = ({ updateBalance, userBalance }) => {
 };
 
 export default Earn;
+
