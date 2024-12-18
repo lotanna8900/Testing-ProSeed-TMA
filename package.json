@@ -4,7 +4,7 @@
   "private": true,
   "main": "backend/server.js",
   "homepage": ".",
-  "type": "module",  // Add this line
+  "type": "module",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -53,3 +53,4 @@
     "cross-env": "^7.0.3"
   }
 }
+
