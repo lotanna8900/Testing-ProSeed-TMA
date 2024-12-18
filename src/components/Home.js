@@ -37,7 +37,7 @@ const Home = () => {
 
       fetchTelegramIDFromServer();
     }
-  }, []);
+  }, [handleDailyCheckIn, checkInStatus, psdtBalance]); // Add handleDailyCheckIn, checkInStatus, psdtBalance to dependency array
 
   const handleCheckIn = async () => {
     if (!checkInStatus) {
@@ -95,6 +95,7 @@ const Home = () => {
 };
 
 export default Home;
+
 
 
 
