@@ -18,14 +18,20 @@ const Home = () => {
   const [telegramID, setTelegramID] = useState('');
 
   useEffect(() => {
-    if (user) {
-      fetchTelegramID(); // Automatically retrieves user's Telegram ID
-      setTelegramID(user.telegramId); // Set the user's telegram ID
-    } else {
-      const telegramUser = { username: 'username', id: 'telegramID' }; // Replace with actual Telegram user details
-      registerUserAutomatically(telegramUser);
-    }
-  }, [fetchTelegramID, user, registerUserAutomatically]);
+    // Fetch Telegram ID from server
+    const fetchTelegramIDFromServer = async () => {
+      try {
+        const response = await fetch('/api/fetchTelegramID');
+        const data = await response.json();
+        setTelegramID(data.telegramID || 'Loading...');
+      } catch (error) {
+        console.error('Error fetching Telegram ID:', error);
+        setTelegramID('Error loading ID');
+      }
+    };
+
+    fetchTelegramIDFromServer();
+  }, []);
 
   const handleCheckIn = async () => {
     if (!checkInStatus) {
@@ -39,7 +45,7 @@ const Home = () => {
     <div className="home-container">
       {/* Display User's Telegram ID */}
       <div className="user-id">
-        <span>Telegram ID: {telegramID || 'Loading...'}</span> {/* Display Telegram ID or Loading */}
+        <span>Telegram ID: {telegramID}</span> {/* Display Telegram ID */}
       </div>
 
       {/* Daily Check-in Button */}
@@ -83,3 +89,4 @@ const Home = () => {
 };
 
 export default Home;
+
