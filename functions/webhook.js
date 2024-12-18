@@ -6,24 +6,33 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 exports.handler = async (event, context) => {
   try {
+    if (!event.body) {
+      throw new Error('Request body is empty');
+    }
+
+    console.log('Received event body:', event.body);
+    
     const body = JSON.parse(event.body);
     const { message } = body;
+
+    if (!message || !message.chat || !message.from) {
+      throw new Error('Invalid message format');
+    }
+
     const chatId = message.chat.id;
     const username = message.from.username;
 
     await client.connect();
-    const database = client.db('proseed'); // Your database name
+    const database = client.db('proseed');
     const users = database.collection('users');
 
-    // Register user
     const result = await users.updateOne(
       { telegramId: chatId },
       { $set: { telegramId: chatId, username: username } },
       { upsert: true }
     );
 
-    // Optionally, send a response message back to the Telegram bot
-    const botToken = '7081906465:AAGouHJ-9KoKZLY5_IS0umVfFLfzVCqcoks'; // Your bot token
+    const botToken = '7081906465:AAGouHJ-9KoKZLY5_IS0umVfFLfzVCqcoks';
     const messageText = `You have been registered. Your ID: ${chatId}`;
     const responseUrl = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(messageText)}`;
     await fetch(responseUrl);
@@ -42,3 +51,4 @@ exports.handler = async (event, context) => {
     await client.close();
   }
 };
+
