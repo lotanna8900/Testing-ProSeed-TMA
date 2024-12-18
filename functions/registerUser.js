@@ -5,6 +5,10 @@ const client = new MongoClient(uri);
 
 export const handler = async (event, context) => {
   try {
+    if (!event.body) {
+      throw new Error('Request body is empty');
+    }
+
     const { username, walletAddress } = JSON.parse(event.body);
     if (!username || !walletAddress) {
       throw new Error('Username and wallet address are required');
@@ -30,6 +34,7 @@ export const handler = async (event, context) => {
     await client.close();
   }
 };
+
 
 
 
