@@ -10,36 +10,36 @@ const Home = () => {
     setPsdtBalance,
     handleDailyCheckIn,
     checkInStatus,
+    telegramId, // Assume this is coming from your context or retrieved from storage
   } = useAppContext(); // Use the custom hook to access context
 
   const [telegramID, setTelegramID] = useState('');
 
   useEffect(() => {
-    // Fetch Telegram ID from local storage
+    const fetchTelegramIDFromServer = async (id) => {
+      try {
+        const response = await fetch(`https://pro-seed-backend.vercel.app/api/fetchTelegramID?telegramId=${id}`);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setTelegramID(data.telegramID || 'Loading...');
+        // Store Telegram ID in local storage
+        localStorage.setItem('telegramId', data.telegramID || 'Error loading ID');
+      } catch (error) {
+        console.error('Error fetching Telegram ID:', error);
+        setTelegramID('Error loading ID');
+      }
+    };
+
+    // Fetch Telegram ID from local storage or server if telegramId is available
     const storedTelegramID = localStorage.getItem('telegramId');
     if (storedTelegramID) {
       setTelegramID(storedTelegramID);
-    } else {
-      // Fetch from server if not in local storage
-      const fetchTelegramIDFromServer = async () => {
-        try {
-          const response = await fetch(`https://api.yourdomain.com/api/fetchTelegramID?telegramId=5820114496`);
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          const data = await response.json();
-          setTelegramID(data.telegramID || 'Loading...');
-          // Store Telegram ID in local storage
-          localStorage.setItem('telegramId', data.telegramID || 'Error loading ID');
-        } catch (error) {
-          console.error('Error fetching Telegram ID:', error);
-          setTelegramID('Error loading ID');
-        }
-      };
-
-      fetchTelegramIDFromServer();
+    } else if (telegramId) {
+      fetchTelegramIDFromServer(telegramId);
     }
-  }, []);
+  }, [telegramId]);
 
   const handleCheckIn = async () => {
     if (!checkInStatus) {
@@ -97,6 +97,7 @@ const Home = () => {
 };
 
 export default Home;
+
 
 
 
