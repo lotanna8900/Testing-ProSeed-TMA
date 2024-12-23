@@ -16,7 +16,7 @@ export const AppProvider = ({ children }) => {
     const fetchUserData = async () => {
       if (!walletAddress) return; // Prevent API call if walletAddress is empty
       try {
-        const response = await axios.get(`/api/users/${walletAddress}`);
+        const response = await axios.get(`https://backend-proseed.vercel.app/api/users/${walletAddress}`);
         setUser(response.data);
         setPsdtBalance(response.data.psdtBalance || 0); // Handle case where psdtBalance might be undefined
         setLoading(false);
@@ -31,8 +31,9 @@ export const AppProvider = ({ children }) => {
 
   const registerUserAutomatically = async (telegramUser) => {
     try {
-      const response = await fetch('/.netlify/functions/registerUser', {
+      const response = await fetch('https://backend-proseed.vercel.app/api/registerUser', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: telegramUser.username, telegramID: telegramUser.id }),
       });
       const data = await response.json();
@@ -48,8 +49,9 @@ export const AppProvider = ({ children }) => {
       return;
     }
     try {
-      const response = await fetch('/.netlify/functions/updateBalance', {
+      const response = await fetch('https://backend-proseed.vercel.app/api/updateBalance', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: user._id, newBalance }),
       });
       const data = await response.json();
@@ -64,8 +66,9 @@ export const AppProvider = ({ children }) => {
     if (!checkInStatus) {
       const newBalance = psdtBalance + 100;
       try {
-        await fetch('/.netlify/functions/updateBalance', {
+        await fetch('https://backend-proseed.vercel.app/api/updateBalance', {
           method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ userId: user._id, newBalance }),
         });
         setPsdtBalance(newBalance);
@@ -96,8 +99,9 @@ export const AppProvider = ({ children }) => {
 
   const fetchTelegramID = async () => {
     try {
-      const response = await fetch('/.netlify/functions/fetchTelegramID', {
+      const response = await fetch('https://backend-proseed.vercel.app/api/fetchTelegramID', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: user.username }),
       });
       const data = await response.json();
@@ -136,4 +140,3 @@ export const useAppContext = () => {
   }
   return context;
 };
-

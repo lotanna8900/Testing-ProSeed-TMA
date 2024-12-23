@@ -5,16 +5,22 @@ const Leaderboard = () => {
   const [leaderboard, setLeaderboard] = useState([]);
   const [userRanking, setUserRanking] = useState(null);
 
-  // Simulate fetching data from a database
+  // Fetching data from the backend
   useEffect(() => {
     const fetchLeaderboardData = async () => {
-      // Simulate API call
-      const response = await fetch('/api/leaderboard'); // Replace with actual API endpoint
-      const data = await response.json();
+      try {
+        const response = await fetch('https://backend-proseed.vercel.app/api/leaderboard'); // Updated to actual API endpoint
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
 
-      // Assuming data contains sorted leaderboard and user's rank info
-      setLeaderboard(data.leaderboard);
-      setUserRanking(data.userRank); // Get specific user's ranking (replace with actual data logic)
+        // Assuming data contains sorted leaderboard and user's rank info
+        setLeaderboard(data.leaderboard);
+        setUserRanking(data.userRank); // Get specific user's ranking (replace with actual data logic)
+      } catch (error) {
+        console.error('Error fetching leaderboard data:', error);
+      }
     };
 
     fetchLeaderboardData();
@@ -48,3 +54,4 @@ const Leaderboard = () => {
 };
 
 export default Leaderboard;
+

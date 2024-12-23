@@ -18,7 +18,7 @@ const Home = () => {
   useEffect(() => {
     const fetchTelegramIDFromServer = async (id) => {
       try {
-        const response = await fetch(`https://pro-seed-backend.vercel.app/api/fetchTelegramID?telegramId=${id}`);
+        const response = await fetch(`https://backend-proseed.vercel.app/api/fetchTelegramID?telegramId=${id}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }

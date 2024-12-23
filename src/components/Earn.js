@@ -160,4 +160,3 @@ const Earn = ({ updateBalance, userBalance }) => {
 };
 
 export default Earn;
-

@@ -55,3 +55,4 @@ const Wallet = ({ psdtBalance, updateWalletAddress }) => {
 };
 
 export default Wallet;
+
